@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: users
+    // Document ID: {userId} (matches the user's Firebase Auth UID)
+    // Fields:
+    //   - plannerData: map (required) - Contains all app data (checklist, guests, etc.)
+    //   - updatedAt: timestamp (optional) - Timestamp when document was last updated
+    // ===============================================================
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user is the owner of the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Domain validation function
+    function isValidUserData(data) {
+      return data.keys().hasAny(['plannerData']) &&
+             (data.plannerData is map);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidUserData(request.resource.data);
+      allow delete: if isOwner(userId);
+    }
+  }
+}
