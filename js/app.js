@@ -38,6 +38,9 @@
 
   // --- Init on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
+    // Initialize login UI handlers
+    Auth.initLoginUI();
+
     initCloseButtons();
     initSidebar();
     initRouting();
@@ -54,11 +57,83 @@
     Moodboard.init();
     PostNikah.init();
 
-    // Check first run
-    if (Store.isFirstRun()) {
-      openModal('modal-setup');
-    }
+    // --- Auth State Listener ---
+    initAuthFlow();
   });
+
+  // --- Authentication Flow ---
+  function initAuthFlow() {
+    if (!firebaseAuth) {
+      // Firebase not configured — show app without auth (fallback mode)
+      console.warn('Firebase not configured. Running in offline mode.');
+      hideLoading();
+      Auth.showAppScreen();
+      if (Store.isFirstRun()) {
+        openModal('modal-setup');
+      }
+      return;
+    }
+
+    firebaseAuth.onAuthStateChanged((user) => {
+      hideLoading();
+
+      if (user) {
+        // User is signed in
+        console.log('🔐 User logged in:', user.email);
+
+        // Show app, hide login
+        Auth.showAppScreen();
+        Auth.updateUserUI(user);
+
+        // Enable cloud sync
+        Store.enableCloudSync(user.uid).then(() => {
+          // Refresh all modules with synced data
+          refreshAllModules();
+
+          // Check first run
+          if (Store.isFirstRun()) {
+            openModal('modal-setup');
+          }
+        });
+      } else {
+        // User is signed out
+        console.log('🔓 User logged out');
+        Store.disableCloudSync();
+        Auth.showLoginScreen();
+      }
+    });
+  }
+
+  function hideLoading() {
+    const loading = document.getElementById('login-loading');
+    if (loading) loading.classList.remove('active');
+  }
+
+  function refreshAllModules() {
+    // Refresh dashboard
+    if (typeof Dashboard !== 'undefined' && Dashboard.refresh) {
+      Dashboard.refresh();
+    }
+    // Re-render modules that have render methods
+    if (typeof Checklist !== 'undefined' && Checklist.render) {
+      Checklist.render();
+    }
+    if (typeof Guests !== 'undefined' && Guests.render) {
+      Guests.render();
+    }
+    if (typeof Savings !== 'undefined' && Savings.render) {
+      Savings.render();
+    }
+    if (typeof Timeline !== 'undefined' && Timeline.render) {
+      Timeline.render();
+    }
+    if (typeof Moodboard !== 'undefined' && Moodboard.render) {
+      Moodboard.render();
+    }
+    if (typeof PostNikah !== 'undefined' && PostNikah.render) {
+      PostNikah.render();
+    }
+  }
 
   // --- Close Buttons for Modals ---
   function initCloseButtons() {

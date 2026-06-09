@@ -1,9 +1,15 @@
 /* ============================================
-   NikahPlanner — Data Store (localStorage)
+   NikahPlanner — Data Store (localStorage + Firestore Cloud Sync)
    ============================================ */
 
 const Store = (() => {
   const STORAGE_KEY = 'nikahplanner_data';
+
+  // Cloud sync state
+  let cloudSyncEnabled = false;
+  let currentUid = null;
+  let syncDebounceTimer = null;
+  const SYNC_DEBOUNCE_MS = 1500;
 
   // Default schema
   const defaultData = {
@@ -52,6 +58,10 @@ const Store = (() => {
   function saveAll(data) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      // Trigger cloud sync if enabled
+      if (cloudSyncEnabled) {
+        debouncedCloudSync(data);
+      }
     } catch (e) {
       console.error('Store: Error saving data', e);
     }
@@ -70,6 +80,166 @@ const Store = (() => {
     if (event !== 'change' && listeners['change']) {
       listeners['change'].forEach(fn => fn({ event, payload }));
     }
+  }
+
+  // ==================== CLOUD SYNC ====================
+
+  /**
+   * Update sync indicator UI
+   * @param {'syncing'|'synced'|'error'} status
+   */
+  function updateSyncUI(status) {
+    const indicator = document.getElementById('sync-indicator');
+    const dot = document.getElementById('sync-dot');
+    const statusText = document.getElementById('sync-status');
+
+    if (!indicator) return;
+    indicator.style.display = 'flex';
+
+    if (status === 'syncing') {
+      if (dot) { dot.classList.add('syncing'); dot.style.background = ''; }
+      if (statusText) statusText.textContent = 'Menyinkronkan...';
+    } else if (status === 'synced') {
+      if (dot) { dot.classList.remove('syncing'); dot.style.background = ''; }
+      if (statusText) statusText.textContent = 'Data tersinkron';
+    } else if (status === 'error') {
+      if (dot) { dot.classList.remove('syncing'); dot.style.background = 'var(--color-danger)'; }
+      if (statusText) statusText.textContent = 'Gagal sinkron';
+    }
+  }
+
+  /**
+   * Save data to Firestore
+   * @param {object} data
+   * @returns {Promise}
+   */
+  function syncToCloud(data) {
+    if (!firebaseDb || !currentUid) return Promise.resolve();
+
+    updateSyncUI('syncing');
+
+    return firebaseDb
+      .collection('users')
+      .doc(currentUid)
+      .set({
+        plannerData: data,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true })
+      .then(() => {
+        updateSyncUI('synced');
+        console.log('☁️ Data synced to cloud');
+      })
+      .catch((error) => {
+        updateSyncUI('error');
+        console.error('☁️ Cloud sync error:', error);
+      });
+  }
+
+  /**
+   * Debounced cloud sync — waits before syncing to batch rapid changes
+   * @param {object} data
+   */
+  function debouncedCloudSync(data) {
+    clearTimeout(syncDebounceTimer);
+    syncDebounceTimer = setTimeout(() => {
+      syncToCloud(data);
+    }, SYNC_DEBOUNCE_MS);
+  }
+
+  /**
+   * Load data from Firestore
+   * @returns {Promise<object|null>}
+   */
+  function loadFromCloud() {
+    if (!firebaseDb || !currentUid) return Promise.resolve(null);
+
+    return firebaseDb
+      .collection('users')
+      .doc(currentUid)
+      .get()
+      .then((doc) => {
+        if (doc.exists && doc.data().plannerData) {
+          console.log('☁️ Data loaded from cloud');
+          return doc.data().plannerData;
+        }
+        return null;
+      })
+      .catch((error) => {
+        console.error('☁️ Cloud load error:', error);
+        return null;
+      });
+  }
+
+  /**
+   * Merge cloud data with local data
+   * Cloud data takes priority, but missing collections fallback to local
+   * @param {object} localData
+   * @param {object} cloudData
+   * @returns {object}
+   */
+  function mergeData(localData, cloudData) {
+    if (!cloudData) return localData;
+    if (!localData || !localData.settings.weddingDate) return cloudData;
+
+    // If both exist, cloud takes priority (most recent)
+    // But if cloud has no data in a collection and local does, keep local
+    const merged = { ...JSON.parse(JSON.stringify(defaultData)) };
+
+    // Settings: cloud wins if present
+    merged.settings = cloudData.settings && cloudData.settings.weddingDate
+      ? { ...defaultData.settings, ...cloudData.settings }
+      : { ...defaultData.settings, ...localData.settings };
+
+    // Collections: use cloud if it has items, otherwise fallback to local
+    const collections = ['checklist', 'guests', 'savings', 'timeline', 'moodboard', 'postNikah'];
+    collections.forEach(col => {
+      if (cloudData[col] && cloudData[col].length > 0) {
+        merged[col] = cloudData[col];
+      } else if (localData[col] && localData[col].length > 0) {
+        merged[col] = localData[col];
+      }
+    });
+
+    return merged;
+  }
+
+  /**
+   * Enable cloud sync for a given user
+   * @param {string} uid — Firebase user ID
+   * @returns {Promise}
+   */
+  function enableCloudSync(uid) {
+    currentUid = uid;
+    cloudSyncEnabled = true;
+
+    // Load from cloud, merge with local, then sync back
+    return loadFromCloud().then((cloudData) => {
+      const localData = loadAll();
+      const merged = mergeData(localData, cloudData);
+
+      // Save merged data locally
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+
+      // Sync merged data back to cloud (ensures cloud has latest)
+      syncToCloud(merged);
+
+      // Notify all listeners of data change
+      emit('change', { action: 'cloud-sync', data: merged });
+
+      updateSyncUI('synced');
+      return merged;
+    });
+  }
+
+  /**
+   * Disable cloud sync (on logout)
+   */
+  function disableCloudSync() {
+    cloudSyncEnabled = false;
+    currentUid = null;
+    clearTimeout(syncDebounceTimer);
+    const indicator = document.getElementById('sync-indicator');
+    if (indicator) indicator.style.display = 'none';
   }
 
   return {
@@ -261,7 +431,17 @@ const Store = (() => {
      */
     clearAll() {
       localStorage.removeItem(STORAGE_KEY);
+      // Also clear cloud data if syncing
+      if (cloudSyncEnabled && firebaseDb && currentUid) {
+        firebaseDb.collection('users').doc(currentUid).delete().catch(e => {
+          console.error('Store: Error clearing cloud data', e);
+        });
+      }
       emit('change', { action: 'clear' });
     },
+
+    // --- Cloud Sync API ---
+    enableCloudSync,
+    disableCloudSync,
   };
 })();
