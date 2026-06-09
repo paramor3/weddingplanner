@@ -232,12 +232,16 @@ const Store = (() => {
   }
 
   /**
-   * Disable cloud sync (on logout)
+   * Disable cloud sync (on logout) and clear local cache
    */
   function disableCloudSync() {
     cloudSyncEnabled = false;
     currentUid = null;
     clearTimeout(syncDebounceTimer);
+    
+    // Clear local storage cache to prevent session leaks
+    localStorage.removeItem(STORAGE_KEY);
+    
     const indicator = document.getElementById('sync-indicator');
     if (indicator) indicator.style.display = 'none';
   }

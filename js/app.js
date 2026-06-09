@@ -36,8 +36,8 @@
     openModal('modal-delete');
   };
 
-  // --- Init on DOM Ready ---
-  document.addEventListener('DOMContentLoaded', () => {
+  // --- Init on DOM Ready (Safe from race conditions) ---
+  function initApp() {
     // Initialize login UI handlers
     Auth.initLoginUI();
 
@@ -59,7 +59,13 @@
 
     // --- Auth State Listener ---
     initAuthFlow();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 
   // --- Authentication Flow ---
   function initAuthFlow() {
@@ -99,6 +105,7 @@
         // User is signed out
         console.log('🔓 User logged out');
         Store.disableCloudSync();
+        refreshAllModules(); // Clear any UI data in memory
         Auth.showLoginScreen();
       }
     });
