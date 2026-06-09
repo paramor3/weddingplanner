@@ -14,16 +14,12 @@ const Dashboard = (() => {
 
   function init() {
     refresh();
-    startCountdown();
 
     // Listen for data changes
     Store.on('checklist', refresh);
     Store.on('guests', refresh);
     Store.on('savings', refresh);
-    Store.on('settings', () => {
-      refresh();
-      startCountdown();
-    });
+    Store.on('settings', refresh);
   }
 
   function refresh() {
@@ -32,6 +28,7 @@ const Dashboard = (() => {
     updateBudgetChart();
     updateGuestChart();
     updateSidebarInfo();
+    startCountdown();
   }
 
   function updateMetrics() {
@@ -243,7 +240,26 @@ const Dashboard = (() => {
     if (countdownInterval) clearInterval(countdownInterval);
 
     const settings = Store.getSettings();
-    if (!settings.weddingDate) return;
+    if (!settings.weddingDate) {
+      // Reset display elements to default "--"
+      const cdDays = document.getElementById('cd-days');
+      const cdHours = document.getElementById('cd-hours');
+      const cdMinutes = document.getElementById('cd-minutes');
+      const cdSeconds = document.getElementById('cd-seconds');
+      if (cdDays) cdDays.textContent = '--';
+      if (cdHours) cdHours.textContent = '--';
+      if (cdMinutes) cdMinutes.textContent = '--';
+      if (cdSeconds) cdSeconds.textContent = '--';
+
+      // Reset display separators/labels
+      const display = document.getElementById('countdown-display');
+      if (display) {
+        display.classList.remove('countdown-past');
+        display.querySelectorAll('.countdown-sep').forEach(s => s.style.display = '');
+        display.querySelectorAll('.countdown-label').forEach(l => l.style.display = '');
+      }
+      return;
+    }
 
     function update() {
       const cd = calculateCountdown(settings.weddingDate);
@@ -282,6 +298,8 @@ const Dashboard = (() => {
       if (settings.weddingDate) {
         document.getElementById('sidebar-couple-date').textContent = formatDate(settings.weddingDate);
       }
+    } else {
+      couple.style.display = 'none';
     }
   }
 
