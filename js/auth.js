@@ -200,32 +200,6 @@ const Auth = (() => {
       });
     }
 
-    // Google Sign-In button
-    const btnGoogleLogin = document.getElementById('btn-google-login');
-    if (btnGoogleLogin) {
-      btnGoogleLogin.addEventListener('click', () => {
-        btnGoogleLogin.disabled = true;
-        btnGoogleLogin.querySelector('.btn-text').textContent = 'Menghubungkan...';
-        signInWithGoogle().finally(() => {
-          btnGoogleLogin.disabled = false;
-          btnGoogleLogin.querySelector('.btn-text').textContent = 'Masuk dengan Google';
-        });
-      });
-    }
-
-    // Google Sign-In on register page
-    const btnGoogleRegister = document.getElementById('btn-google-register');
-    if (btnGoogleRegister) {
-      btnGoogleRegister.addEventListener('click', () => {
-        btnGoogleRegister.disabled = true;
-        btnGoogleRegister.querySelector('.btn-text').textContent = 'Menghubungkan...';
-        signInWithGoogle().finally(() => {
-          btnGoogleRegister.disabled = false;
-          btnGoogleRegister.querySelector('.btn-text').textContent = 'Daftar dengan Google';
-        });
-      });
-    }
-
     // Email login
     const btnEmailLogin = document.getElementById('btn-email-login');
     if (btnEmailLogin) {
