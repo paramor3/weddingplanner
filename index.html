@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NikahPlanner — Platform terintegrasi untuk merencanakan pernikahan impian Anda. Kelola anggaran, vendor, tamu, dan tabungan dalam satu tempat.">
+  <title>NikahPlanner — Wedding Planning Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/checklist.css">
+  <link rel="stylesheet" href="css/guests.css">
+  <link rel="stylesheet" href="css/savings.css">
+  <link rel="stylesheet" href="css/calculators.css">
+  <link rel="stylesheet" href="css/timeline.css">
+  <link rel="stylesheet" href="css/moodboard.css">
+  <link rel="stylesheet" href="css/postnikah.css">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+</head>
+<body>
+  <div class="app-wrapper" id="app">
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <h2>💍 NikahPlanner</h2>
+        <div class="brand-subtitle">Wedding Planning Platform</div>
+      </div>
+
+      <div class="sidebar-couple" id="sidebar-couple" style="display:none;">
+        <div class="couple-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div>
+          <div class="couple-names" id="sidebar-couple-names"></div>
+          <div class="couple-date" id="sidebar-couple-date"></div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Utama</div>
+        <a class="nav-item active" data-page="dashboard" id="nav-dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a class="nav-item" data-page="checklist" id="nav-checklist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Checklist & Vendor
+        </a>
+        <a class="nav-item" data-page="guests" id="nav-guests">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Daftar Tamu
+        </a>
+        <a class="nav-item" data-page="savings" id="nav-savings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Tabungan
+        </a>
+
+        <div class="nav-section-label">Fitur Pintar</div>
+        <a class="nav-item" data-page="calculators" id="nav-calculators">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><line x1="8" y1="10" x2="8" y2="10.01"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="16" y1="10" x2="16" y2="10.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+          Kalkulator Pintar
+        </a>
+
+        <div class="nav-section-label">Ekstensi</div>
+        <a class="nav-item" data-page="timeline" id="nav-timeline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Rundown Hari-H
+        </a>
+        <a class="nav-item" data-page="moodboard" id="nav-moodboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Moodboard
+        </a>
+        <a class="nav-item" data-page="postnikah" id="nav-postnikah">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Pasca-Nikah
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="settings-link" id="btn-settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Pengaturan
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content" id="main-content">
+
+      <!-- ==================== DASHBOARD ==================== -->
+      <section class="module-section active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p class="page-subtitle">Ringkasan persiapan pernikahan Anda</p>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="dashboard-metrics" id="dashboard-metrics">
+          <div class="metric-card">
+            <div class="metric-icon icon-countdown">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="metric-label">Menuju Hari-H</div>
+            <div class="metric-value countdown-value" id="countdown-display">
+              <div class="countdown-unit"><span class="countdown-num" id="cd-days">--</span><span class="countdown-label">Hari</span></div>
+              <span class="countdown-sep">:</span>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-hours">--</span><span class="countdown-label">Jam</span></div>
+              <span class="countdown-sep">:</span>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-minutes">--</span><span class="countdown-label">Menit</span></div>
+              <span class="countdown-sep">:</span>
+              <div class="countdown-unit"><span class="countdown-num" id="cd-seconds">--</span><span class="countdown-label">Detik</span></div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-budget">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div class="metric-label">Estimasi Total Biaya</div>
+            <div class="metric-value" id="metric-budget">Rp0</div>
+            <div class="metric-sub" id="metric-budget-sub"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-savings">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="metric-label">Total Tabungan</div>
+            <div class="metric-value" id="metric-savings">Rp0</div>
+            <div class="metric-sub" id="metric-savings-sub"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon icon-guests">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="metric-label">Estimasi Tamu</div>
+            <div class="metric-value" id="metric-guests">0 orang</div>
+          </div>
+        </div>
+
+        <!-- Checklist Progress -->
+        <div class="dashboard-progress" id="dashboard-progress">
+          <div class="progress-header">
+            <h3>📋 Progress Persiapan</h3>
+            <span class="progress-percent" id="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-lg">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+          </div>
+          <div class="progress-stats">
+            <span><span class="dot dot-savings"></span> <span id="stats-completed">0</span> selesai</span>
+            <span><span class="dot dot-budget"></span> <span id="stats-remaining">0</span> tersisa</span>
+            <span><span class="dot dot-tasks"></span> <span id="stats-total">0</span> total tugas</span>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="dashboard-charts">
+          <div class="chart-card">
+            <h3>💰 Sebaran Budget</h3>
+            <div class="chart-container">
+              <canvas id="chart-budget" aria-label="Grafik Sebaran Budget"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>👥 Distribusi Tamu</h3>
+            <div class="chart-container">
+              <canvas id="chart-guests" aria-label="Grafik Distribusi Tamu"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== CHECKLIST & VENDOR ==================== -->
+      <section class="module-section" id="page-checklist">
+        <div class="page-header">
+          <div>
+            <h1>Checklist & Vendor</h1>
+            <p class="page-subtitle">Kelola tugas dan vendor pernikahan Anda</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-task">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Tugas
+          </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="checklist-filters" id="checklist-filters">
+          <button class="filter-tab active" data-filter="all">Semua</button>
+          <button class="filter-tab" data-filter="Persiapan Awal">Persiapan Awal</button>
+          <button class="filter-tab" data-filter="Administrasi KUA">Administrasi KUA</button>
+          <button class="filter-tab" data-filter="Vendor Akad">Vendor Akad</button>
+          <button class="filter-tab" data-filter="Vendor Resepsi">Vendor Resepsi</button>
+        </div>
+
+        <!-- Summary -->
+        <div class="checklist-summary" id="checklist-summary">
+          <div class="summary-item">
+            <span class="summary-label">Total Tugas</span>
+            <span class="summary-value" id="cl-total">0</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Selesai</span>
+            <span class="summary-value" id="cl-done">0</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Total Budget</span>
+            <span class="summary-value" id="cl-budget">Rp0</span>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="checklist-table-wrapper">
+          <table class="data-table checklist-table" id="checklist-table">
+            <thead>
+              <tr>
+                <th style="width:40px">✓</th>
+                <th>Tugas / Vendor</th>
+                <th>Kategori</th>
+                <th>Target</th>
+                <th>PIC</th>
+                <th>Budget</th>
+                <th style="width:80px">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="checklist-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="checklist-empty" style="display:none">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <h4>Belum Ada Tugas</h4>
+          <p>Mulai tambahkan tugas dan vendor untuk pernikahan Anda.</p>
+        </div>
+      </section>
+
+      <!-- ==================== DAFTAR TAMU ==================== -->
+      <section class="module-section" id="page-guests">
+        <div class="page-header">
+          <div>
+            <h1>Daftar Tamu</h1>
+            <p class="page-subtitle">Kelola undangan dan estimasi tamu</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-guest">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Tamu
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="guest-summary" id="guest-summary">
+          <div class="guest-stat">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Total Undangan</span>
+              <span class="stat-value" id="guest-total-entries">0</span>
+            </div>
+          </div>
+          <div class="guest-stat">
+            <div class="stat-icon" style="background: linear-gradient(135deg, var(--color-accent-light), rgba(212,165,165,0.3)); color: var(--color-accent-dark);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Total Pax (Orang)</span>
+              <span class="stat-value" id="guest-total-pax">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="guest-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="guest-search-input" placeholder="Cari nama tamu..." class="form-input">
+        </div>
+
+        <!-- Table -->
+        <div class="guest-table-wrapper">
+          <table class="data-table" id="guest-table">
+            <thead>
+              <tr>
+                <th>Nama Tamu / Keluarga</th>
+                <th>Kategori</th>
+                <th style="text-align:center">Pax</th>
+                <th style="width:80px">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="guest-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="guest-empty" style="display:none">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h4>Belum Ada Tamu</h4>
+          <p>Mulai tambahkan daftar undangan untuk pernikahan Anda.</p>
+        </div>
+      </section>
+
+      <!-- ==================== TABUNGAN ==================== -->
+      <section class="module-section" id="page-savings">
+        <div class="page-header">
+          <div>
+            <h1>Tabungan Bersama</h1>
+            <p class="page-subtitle">Pantau tabungan bersama menuju hari bahagia</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-saving">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Setoran
+          </button>
+        </div>
+
+        <!-- Overview Stats -->
+        <div class="savings-overview">
+          <div class="savings-stat-card">
+            <div class="stat-label">Total Tabungan</div>
+            <div class="stat-value" id="sv-total">Rp0</div>
+            <div class="stat-sub" id="sv-entries">0 transaksi</div>
+          </div>
+          <div class="savings-stat-card">
+            <div class="stat-label">Estimasi Biaya</div>
+            <div class="stat-value" id="sv-budget">Rp0</div>
+            <div class="stat-sub">dari Checklist</div>
+          </div>
+          <div class="savings-stat-card">
+            <div class="stat-label">Sisa Kebutuhan</div>
+            <div class="stat-value" id="sv-remaining">Rp0</div>
+            <div class="stat-sub" id="sv-remaining-sub"></div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="savings-progress-section">
+          <div class="savings-progress-header">
+            <h4>Progress Tabungan</h4>
+            <span class="progress-pct" id="sv-progress-pct">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="sv-progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="savings-table-wrapper">
+          <table class="data-table savings-table" id="savings-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Sumber Dana</th>
+                <th>Nominal</th>
+                <th>Keterangan</th>
+                <th style="width:80px">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="savings-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="savings-empty" style="display:none">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <h4>Belum Ada Setoran</h4>
+          <p>Mulai catat tabungan bersama untuk pernikahan Anda.</p>
+        </div>
+      </section>
+
+      <!-- ==================== KALKULATOR PINTAR ==================== -->
+      <section class="module-section" id="page-calculators">
+        <div class="page-header">
+          <div>
+            <h1>Kalkulator Pintar</h1>
+            <p class="page-subtitle">Hitung otomatis kebutuhan seserahan & souvenir</p>
+          </div>
+        </div>
+
+        <div class="calculators-grid">
+          <!-- Seserahan Calculator -->
+          <div class="calc-card">
+            <h3>🎁 Kalkulator Seserahan</h3>
+            <p class="calc-desc">Masukkan total budget seserahan untuk mendapatkan rekomendasi pembagian otomatis.</p>
+
+            <div class="calc-input-group">
+              <div class="form-group">
+                <label class="form-label" for="ses-budget">Total Budget Seserahan (Rp)</label>
+                <input type="text" class="form-input" id="ses-budget" placeholder="Contoh: 5.000.000">
+              </div>
+              <button class="btn btn-accent" id="btn-calc-seserahan">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
+                Hitung Seserahan
+              </button>
+            </div>
+
+            <div class="calc-results" id="ses-results" style="display:none">
+              <h4>Rincian Pembagian</h4>
+              <div class="seserahan-breakdown" id="ses-breakdown"></div>
+              <div class="calc-recommendations" id="ses-recommendations"></div>
+            </div>
+          </div>
+
+          <!-- Souvenir Calculator -->
+          <div class="calc-card">
+            <h3>🎀 Kalkulator Souvenir</h3>
+            <p class="calc-desc">Hitung total biaya souvenir/undangan beserta cadangan logistik.</p>
+
+            <div class="calc-input-group">
+              <div class="form-group">
+                <label class="form-label" for="souv-qty">Jumlah Undangan</label>
+                <input type="number" class="form-input" id="souv-qty" placeholder="Contoh: 100" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="souv-price">Budget per Unit (Rp)</label>
+                <input type="text" class="form-input" id="souv-price" placeholder="Contoh: 10.000">
+              </div>
+              <button class="btn btn-accent" id="btn-calc-souvenir">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
+                Hitung Souvenir
+              </button>
+            </div>
+
+            <div class="calc-results" id="souv-results" style="display:none">
+              <h4>Rincian Biaya</h4>
+              <div class="result-row">
+                <span class="result-label">Biaya Dasar</span>
+                <span class="result-value" id="souv-base">Rp0</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">Cadangan Logistik (10%)</span>
+                <span class="result-value" id="souv-reserve">Rp0</span>
+              </div>
+              <div class="result-row result-total">
+                <span class="result-label">Total Biaya Akhir</span>
+                <span class="result-value" id="souv-total">Rp0</span>
+              </div>
+              <div class="calc-recommendations" id="souv-recommendations"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RUNDOWN HARI-H ==================== -->
+      <section class="module-section" id="page-timeline">
+        <div class="page-header">
+          <div>
+            <h1>Rundown Hari-H</h1>
+            <p class="page-subtitle">Susunan acara dari akad hingga resepsi</p>
+          </div>
+          <div class="flex gap-3">
+            <button class="btn btn-secondary" id="btn-timeline-template">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Gunakan Template
+            </button>
+            <button class="btn btn-primary" id="btn-add-timeline">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Tambah Acara
+            </button>
+          </div>
+        </div>
+
+        <div class="timeline-wrapper" id="timeline-wrapper"></div>
+        <div class="empty-state" id="timeline-empty" style="display:none">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h4>Belum Ada Rundown</h4>
+          <p>Buat susunan acara hari-H pernikahan Anda, atau gunakan template yang tersedia.</p>
+        </div>
+      </section>
+
+      <!-- ==================== MOODBOARD ==================== -->
+      <section class="module-section" id="page-moodboard">
+        <div class="page-header">
+          <div>
+            <h1>Moodboard</h1>
+            <p class="page-subtitle">Kumpulkan inspirasi visual untuk tema pernikahan</p>
+          </div>
+          <button class="btn btn-primary" id="btn-add-mood">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Referensi
+          </button>
+        </div>
+
+        <div class="moodboard-filters" id="mood-filters">
+          <button class="filter-tab active" data-filter="all">Semua</button>
+          <button class="filter-tab" data-filter="Tema Warna">Tema Warna</button>
+          <button class="filter-tab" data-filter="Dekorasi">Dekorasi</button>
+          <button class="filter-tab" data-filter="Attire">Attire</button>
+          <button class="filter-tab" data-filter="Venue">Venue</button>
+          <button class="filter-tab" data-filter="Fotografi">Fotografi</button>
+        </div>
+
+        <div class="moodboard-grid" id="moodboard-grid"></div>
+        <div class="empty-state" id="mood-empty" style="display:none">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <h4>Belum Ada Inspirasi</h4>
+          <p>Tambahkan link Pinterest, Google Drive, atau URL gambar sebagai referensi visual.</p>
+        </div>
+      </section>
+
+      <!-- ==================== PASCA-NIKAH ==================== -->
+      <section class="module-section" id="page-postnikah">
+        <div class="page-header">
+          <div>
+            <h1>Budget Pasca-Nikah</h1>
+            <p class="page-subtitle">Pelacak pengeluaran rumah tangga bulanan</p>
+          </div>
+          <button class="btn btn-primary hidden" id="btn-add-postnikah">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Tambah Pengeluaran
+          </button>
+        </div>
+
+        <div id="postnikah-content"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Setup Modal (First Run) -->
+  <div class="modal-overlay" id="modal-setup">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>💍 Selamat Datang!</h3>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-2);">
+          Mari mulai merencanakan hari bahagia Anda. Isi data berikut untuk memulai.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="setup-groom">Nama Calon Pengantin Pria (CPP)</label>
+          <input type="text" class="form-input" id="setup-groom" placeholder="Contoh: Ahmad">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-bride">Nama Calon Pengantin Wanita (CPW)</label>
+          <input type="text" class="form-input" id="setup-bride" placeholder="Contoh: Fatimah">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="setup-date">Tanggal Pernikahan</label>
+          <input type="date" class="form-input" id="setup-date">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-lg" id="btn-setup-save">Mulai Merencanakan ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="modal-settings">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>⚙️ Pengaturan</h3>
+        <button class="modal-close" data-close="modal-settings">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="set-groom">Nama CPP</label>
+          <input type="text" class="form-input" id="set-groom">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="set-bride">Nama CPW</label>
+          <input type="text" class="form-input" id="set-bride">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="set-date">Tanggal Pernikahan</label>
+          <input type="date" class="form-input" id="set-date">
+        </div>
+        <div class="divider"></div>
+        <button class="btn btn-danger btn-sm" id="btn-reset-data">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Reset Semua Data
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-settings">Batal</button>
+        <button class="btn btn-primary" id="btn-settings-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task Modal (Add/Edit) -->
+  <div class="modal-overlay" id="modal-task">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-task-title">Tambah Tugas</h3>
+        <button class="modal-close" data-close="modal-task">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="task-name">Nama Tugas / Vendor</label>
+          <input type="text" class="form-input" id="task-name" placeholder="Contoh: Booking Venue Resepsi">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-category">Kategori</label>
+            <select class="form-select" id="task-category">
+              <option value="Persiapan Awal">Persiapan Awal</option>
+              <option value="Administrasi KUA">Administrasi KUA</option>
+              <option value="Vendor Akad">Vendor Akad</option>
+              <option value="Vendor Resepsi">Vendor Resepsi</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-date">Target Selesai</label>
+            <input type="date" class="form-input" id="task-date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-pic">PIC (Penanggung Jawab)</label>
+            <select class="form-select" id="task-pic">
+              <option value="CPP">Calon Pengantin Pria (CPP)</option>
+              <option value="CPW">Calon Pengantin Wanita (CPW)</option>
+              <option value="Keluarga">Keluarga</option>
+              <option value="WO">Wedding Organizer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-budget">Estimasi Budget (Rp)</label>
+            <input type="text" class="form-input" id="task-budget" placeholder="Contoh: 5.000.000">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-task">Batal</button>
+        <button class="btn btn-primary" id="btn-task-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guest Modal -->
+  <div class="modal-overlay" id="modal-guest">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-guest-title">Tambah Tamu</h3>
+        <button class="modal-close" data-close="modal-guest">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="guest-name">Nama Tamu / Keluarga</label>
+          <input type="text" class="form-input" id="guest-name" placeholder="Contoh: Keluarga Bapak Suharto">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="guest-category">Kategori</label>
+            <select class="form-select" id="guest-category">
+              <option value="Keluarga Pria">Keluarga Pria</option>
+              <option value="Keluarga Wanita">Keluarga Wanita</option>
+              <option value="Teman Pria">Teman Pria</option>
+              <option value="Teman Wanita">Teman Wanita</option>
+              <option value="VIP/Lainnya">VIP / Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="guest-pax">Jumlah Orang (Pax)</label>
+            <input type="number" class="form-input" id="guest-pax" value="2" min="1" max="50">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-guest">Batal</button>
+        <button class="btn btn-primary" id="btn-guest-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Savings Modal -->
+  <div class="modal-overlay" id="modal-saving">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-saving-title">Tambah Setoran</h3>
+        <button class="modal-close" data-close="modal-saving">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="saving-date">Tanggal Setor</label>
+            <input type="date" class="form-input" id="saving-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="saving-source">Sumber Dana</label>
+            <select class="form-select" id="saving-source">
+              <option value="CPP">Calon Pengantin Pria (CPP)</option>
+              <option value="CPW">Calon Pengantin Wanita (CPW)</option>
+              <option value="Gabungan">Dana Gabungan / Hibah</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="saving-amount">Nominal (Rp)</label>
+          <input type="text" class="form-input" id="saving-amount" placeholder="Contoh: 2.000.000">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="saving-note">Keterangan (opsional)</label>
+          <input type="text" class="form-input" id="saving-note" placeholder="Contoh: Tabungan Gaji Bulan Januari">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-saving">Batal</button>
+        <button class="btn btn-primary" id="btn-saving-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline Modal -->
+  <div class="modal-overlay" id="modal-timeline">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-timeline-title">Tambah Acara</h3>
+        <button class="modal-close" data-close="modal-timeline">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="tl-time">Waktu</label>
+            <input type="time" class="form-input" id="tl-time">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="tl-duration">Durasi (menit)</label>
+            <input type="number" class="form-input" id="tl-duration" placeholder="30" min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tl-activity">Aktivitas</label>
+          <input type="text" class="form-input" id="tl-activity" placeholder="Contoh: Akad Nikah">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="tl-pic">Penanggung Jawab</label>
+            <input type="text" class="form-input" id="tl-pic" placeholder="Contoh: WO / MC">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="tl-notes">Keterangan Perlengkapan</label>
+            <input type="text" class="form-input" id="tl-notes" placeholder="Contoh: Sound system, Dekorasi">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-timeline">Batal</button>
+        <button class="btn btn-primary" id="btn-timeline-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Moodboard Modal -->
+  <div class="modal-overlay" id="modal-mood">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tambah Referensi</h3>
+        <button class="modal-close" data-close="modal-mood">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="mood-title">Judul / Deskripsi</label>
+          <input type="text" class="form-input" id="mood-title" placeholder="Contoh: Inspirasi Dekorasi Rustic">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="mood-url">Link URL (Pinterest / Google Drive / Gambar)</label>
+          <input type="url" class="form-input" id="mood-url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="mood-category">Kategori</label>
+          <select class="form-select" id="mood-category">
+            <option value="Tema Warna">Tema Warna</option>
+            <option value="Dekorasi">Dekorasi</option>
+            <option value="Attire">Attire</option>
+            <option value="Venue">Venue</option>
+            <option value="Fotografi">Fotografi</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-mood">Batal</button>
+        <button class="btn btn-primary" id="btn-mood-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post-Nikah Modal -->
+  <div class="modal-overlay" id="modal-postnikah">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tambah Pengeluaran</h3>
+        <button class="modal-close" data-close="modal-postnikah">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pn-month">Bulan</label>
+            <input type="month" class="form-input" id="pn-month">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pn-category">Kategori</label>
+            <select class="form-select" id="pn-category">
+              <option value="Kebutuhan Pokok">Kebutuhan Pokok</option>
+              <option value="Cicilan">Cicilan</option>
+              <option value="Tabungan Masa Depan">Tabungan Masa Depan</option>
+              <option value="Lain-lain">Lain-lain</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="pn-amount">Nominal (Rp)</label>
+          <input type="text" class="form-input" id="pn-amount" placeholder="Contoh: 3.000.000">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="pn-note">Keterangan</label>
+          <input type="text" class="form-input" id="pn-note" placeholder="Contoh: Belanja bulanan">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-postnikah">Batal</button>
+        <button class="btn btn-primary" id="btn-pn-save">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" id="modal-delete">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h3>⚠️ Konfirmasi Hapus</h3>
+        <button class="modal-close" data-close="modal-delete">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--color-text-secondary); font-size: var(--text-sm);" id="delete-message">
+          Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-delete">Batal</button>
+        <button class="btn btn-danger" id="btn-delete-confirm">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/checklist.js"></script>
+  <script src="js/guests.js"></script>
+  <script src="js/savings.js"></script>
+  <script src="js/calculators.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/moodboard.js"></script>
+  <script src="js/postnikah.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

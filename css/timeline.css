@@ -1,0 +1,114 @@
+/* ============================================
+   NikahPlanner — Wedding Day Timeline
+   ============================================ */
+
+.timeline-wrapper {
+  position: relative;
+  padding-left: var(--space-10);
+}
+
+.timeline-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--color-primary-light), var(--color-accent-light), var(--color-sage-light));
+}
+
+.timeline-item {
+  position: relative;
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.timeline-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-10) + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-card-solid);
+  border: 3px solid var(--color-primary);
+  z-index: 1;
+}
+
+.timeline-item:nth-child(even)::before {
+  border-color: var(--color-accent);
+}
+
+.timeline-item:nth-child(3n)::before {
+  border-color: var(--color-sage);
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-time {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  white-space: nowrap;
+}
+
+.timeline-duration {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  background: rgba(196, 168, 130, 0.08);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-pill);
+}
+
+.timeline-activity {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-details {
+  display: flex;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  flex-wrap: wrap;
+}
+
+.timeline-details span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timeline-wrapper {
+    padding-left: var(--space-8);
+  }
+
+  .timeline-item::before {
+    left: calc(-1 * var(--space-8) + 9px);
+    width: 12px;
+    height: 12px;
+  }
+}

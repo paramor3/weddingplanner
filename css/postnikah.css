@@ -1,0 +1,106 @@
+/* ============================================
+   NikahPlanner — Post-Nikah Budget Tracker
+   ============================================ */
+
+/* Locked state before wedding */
+.postnikah-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+}
+
+.postnikah-locked .lock-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-6);
+  color: var(--color-primary-dark);
+  animation: float 3s ease-in-out infinite;
+}
+
+.postnikah-locked h3 {
+  font-size: var(--text-xl);
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+
+.postnikah-locked p {
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  max-width: 400px;
+  line-height: var(--leading-loose);
+}
+
+/* Active state */
+.postnikah-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.postnikah-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+}
+
+.postnikah-card .pn-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.postnikah-card .pn-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: var(--space-2);
+}
+
+/* Month selector */
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.month-selector button {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(196, 168, 130, 0.2);
+  background: var(--color-bg-card-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+  color: var(--color-text-secondary);
+}
+
+.month-selector button:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+.month-selector .current-month {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  min-width: 180px;
+  text-align: center;
+}

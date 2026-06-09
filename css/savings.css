@@ -1,0 +1,131 @@
+/* ============================================
+   NikahPlanner — Savings / Tabungan Module
+   ============================================ */
+
+/* Savings header stats */
+.savings-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+.savings-stat-card {
+  background: var(--color-bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+
+.savings-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.savings-stat-card:nth-child(1)::before {
+  background: linear-gradient(90deg, var(--color-sage), var(--color-sage-dark));
+}
+.savings-stat-card:nth-child(2)::before {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+}
+.savings-stat-card:nth-child(3)::before {
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+}
+
+.savings-stat-card .stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.savings-stat-card .stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-top: var(--space-2);
+}
+
+.savings-stat-card .stat-sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  margin-top: var(--space-2);
+}
+
+/* Progress section */
+.savings-progress-section {
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-card);
+}
+
+.savings-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
+}
+
+.savings-progress-header h4 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.savings-progress-header .progress-pct {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+/* Source badges */
+.source-cpp       { background: var(--color-info-light); color: #3D6A8A; }
+.source-cpw       { background: var(--color-accent-light); color: var(--color-accent-dark); }
+.source-gabungan  { background: var(--color-sage-light); color: var(--color-sage-dark); }
+
+/* Transaction row */
+.savings-table tbody tr {
+  transition: background var(--duration-fast) ease;
+}
+
+.savings-table .amount-cell {
+  font-weight: 600;
+  color: var(--color-sage-dark);
+  white-space: nowrap;
+}
+
+.savings-table .note-cell {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  max-width: 200px;
+}
+
+.savings-table .note-cell:empty::before {
+  content: '-';
+  color: var(--color-text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .savings-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .savings-table-wrapper {
+    overflow-x: auto;
+  }
+}

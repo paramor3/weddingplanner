@@ -1,0 +1,111 @@
+/* ============================================
+   NikahPlanner — Guest List Module
+   ============================================ */
+
+/* Guest summary bar */
+.guest-summary {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.guest-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(196, 168, 130, 0.12);
+  box-shadow: var(--shadow-xs);
+}
+
+.guest-stat .stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-lavender-light), rgba(184, 169, 201, 0.3));
+  color: #6B5B8D;
+}
+
+.guest-stat .stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-stat .stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+}
+
+.guest-stat .stat-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Category badges for guests */
+.cat-keluarga-pria   { background: #DBEAFE; color: #1E40AF; }
+.cat-keluarga-wanita { background: var(--color-accent-light); color: var(--color-accent-dark); }
+.cat-teman-pria      { background: var(--color-sage-light); color: var(--color-sage-dark); }
+.cat-teman-wanita    { background: var(--color-lavender-light); color: #6B5B8D; }
+.cat-vip             { background: var(--color-warning-light); color: #8A7A30; }
+
+/* Search bar */
+.guest-search {
+  position: relative;
+  max-width: 360px;
+  margin-bottom: var(--space-4);
+}
+
+.guest-search input {
+  width: 100%;
+  padding: 0.6rem 0.875rem 0.6rem 2.5rem;
+  border: 1.5px solid rgba(196, 168, 130, 0.2);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-card-solid);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.guest-search input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(196, 168, 130, 0.1);
+}
+
+.guest-search svg {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+}
+
+.pax-cell {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--text-md);
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .guest-summary {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .guest-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
