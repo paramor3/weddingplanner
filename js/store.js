@@ -31,13 +31,29 @@ const Store = (() => {
   const listeners = {};
 
   /**
+   * Resolve active localStorage key based on current UID
+   * @returns {string}
+   */
+  function getStorageKey() {
+    return currentUid ? `nikahplanner_data_${currentUid}` : 'nikahplanner_data_guest';
+  }
+
+  /**
    * Load all data from localStorage
    * @returns {object}
    */
   function loadAll() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return JSON.parse(JSON.stringify(defaultData));
+      const key = getStorageKey();
+      const raw = localStorage.getItem(key);
+      if (!raw) {
+        // Fallback to legacy key to prevent data loss on initial load
+        if (!currentUid) {
+          const legacy = localStorage.getItem('nikahplanner_data');
+          if (legacy) return JSON.parse(legacy);
+        }
+        return JSON.parse(JSON.stringify(defaultData));
+      }
       const parsed = JSON.parse(raw);
       // Merge with defaults to ensure all keys exist
       return {
@@ -57,7 +73,8 @@ const Store = (() => {
    */
   function saveAll(data) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      const key = getStorageKey();
+      localStorage.setItem(key, JSON.stringify(data));
       // Trigger cloud sync if enabled
       if (cloudSyncEnabled) {
         debouncedCloudSync(data);
@@ -214,11 +231,27 @@ const Store = (() => {
 
     // Load from cloud, merge with local, then sync back
     return loadFromCloud().then((cloudData) => {
-      const localData = loadAll();
+      let localData = loadAll();
+
+      // Migrate guest data to user account if the user account is completely new
+      const guestData = localStorage.getItem('nikahplanner_data_guest') || localStorage.getItem('nikahplanner_data');
+      if (guestData) {
+        const parsedGuest = JSON.parse(guestData);
+        const hasLocalData = localData.settings.weddingDate;
+        const hasCloudData = cloudData && cloudData.settings.weddingDate;
+        if (!hasLocalData && !hasCloudData) {
+          localData = parsedGuest;
+          // Clear legacy guest data so it's not migrated repeatedly
+          localStorage.removeItem('nikahplanner_data_guest');
+          localStorage.removeItem('nikahplanner_data');
+        }
+      }
+
       const merged = mergeData(localData, cloudData);
 
       // Save merged data locally
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      const key = getStorageKey();
+      localStorage.setItem(key, JSON.stringify(merged));
 
       // Sync merged data back to cloud (ensures cloud has latest)
       syncToCloud(merged);
@@ -232,16 +265,12 @@ const Store = (() => {
   }
 
   /**
-   * Disable cloud sync (on logout) and clear local cache
+   * Disable cloud sync (on logout)
    */
   function disableCloudSync() {
     cloudSyncEnabled = false;
     currentUid = null;
     clearTimeout(syncDebounceTimer);
-    
-    // Clear local storage cache to prevent session leaks
-    localStorage.removeItem(STORAGE_KEY);
-    
     const indicator = document.getElementById('sync-indicator');
     if (indicator) indicator.style.display = 'none';
   }

@@ -444,3 +444,8 @@
     display: none;
   }
 }
+
+/* Ensure toast notifications show above login screen */
+.toast-container {
+  z-index: 700 !important;
+}
