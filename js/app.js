@@ -97,13 +97,18 @@
         // Refresh modules immediately with local user data (no delay)
         refreshAllModules();
 
+        // Check first run immediately based on local cache
+        if (Store.isFirstRun()) {
+          openModal('modal-setup');
+        }
+
         syncPromise.then(() => {
           // Refresh again once cloud data is fetched and merged
           refreshAllModules();
 
-          // Check first run
-          if (Store.isFirstRun()) {
-            openModal('modal-setup');
+          // If cloud data was loaded and it's no longer a first run, close the modal
+          if (!Store.isFirstRun()) {
+            closeModal('modal-setup');
           }
         });
       } else {
