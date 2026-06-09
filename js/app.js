@@ -92,8 +92,13 @@
         Auth.updateUserUI(user);
 
         // Enable cloud sync
-        Store.enableCloudSync(user.uid).then(() => {
-          // Refresh all modules with synced data
+        const syncPromise = Store.enableCloudSync(user.uid);
+        
+        // Refresh modules immediately with local user data (no delay)
+        refreshAllModules();
+
+        syncPromise.then(() => {
+          // Refresh again once cloud data is fetched and merged
           refreshAllModules();
 
           // Check first run
